@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,14 +8,42 @@
     <link rel="stylesheet" href="style.css">
     <title>Hexadocu</title>
 </head>
+
 <body>
     <section class="main-title">
         <h1>HEXADOCU</h1>
     </section>
+    <div class="info">
+        <p class="intro">
+            This is just another sudoku puzzle except there are 144 cells!
+        </p>
+        <p class="intro">
+            Possible values are 1~9 and A~F.
+        </p>
+    </div>
     <section class="puzzle-area">
         <table id="puzzle">
         </table>
     </section>
-    <script src="script.js"></script>
+    <div class="buttons">
+        <div id="reset" class="btn">Reset</div>
+        <div id="check" class="btn">Check</div>
+    </div>
+    <div class="difficulty">
+        <form method="post">
+            <label for="diff">Difficulty</label>
+            <select name="diff" id="diff">
+                <option value="ezpz">EZPZ</option>
+                <option value="easy">Easy</option>
+                <option value="regular">Regular</option>
+                <option value="hard">Hard</option>
+                <option value="bruh">BRUH</option>
+            </select>
+        </form>
+        <p class="warning">WARNING! Choosing a difficulty will reset your game!</p>
+    </div>
+    <script src="puzzle.js"></script>
+    <script src="main.js"></script>
 </body>
+
 </html>

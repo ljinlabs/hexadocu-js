@@ -13,23 +13,34 @@ function buildPuzzle() {
         tr.setAttribute('class','row');
         puzzle.appendChild(tr);
     }
-    console.log(puzzle);
     return true;
 }
 
 function parseId(id) {
-    
+    const idSplit = id.split("-");
+    return [parseInt(idSplit[1]), parseInt(idSplit[3])];
 }
 
 function colorBorders() {
     const allCells = document.querySelectorAll(".cell");
     allCells.forEach(elem => {
-        let cellId = elem.getAttribute('id');
-    })
+        const cellId = elem.getAttribute('id');
+        const splits = parseId(cellId);
+        const i = splits[0];
+        const j = splits[1];
+        
+        if (i % 4 == 0 && i != 0) {
+            elem.classList.add("top-border");
+        }
+        if (j % 4 == 0 && j != 0) {
+            elem.classList.add("left-border");
+        }
+    });
 }
 
 function main() {
     buildPuzzle();
+    colorBorders();
 }
 
 main();
