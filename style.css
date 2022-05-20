@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;400&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+.main-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+}
+
+.puzzle-area {
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#puzzle {
+    margin: 0 auto;
+}
+
+td {
+    border: 1px white solid;
+    width: 6vw;
+    height: 6vw;
+}
