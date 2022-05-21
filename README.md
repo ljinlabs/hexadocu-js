@@ -4,7 +4,7 @@ Just a regular sudoku puzzle EXCEPT there are 16 possible values.
 
 Possible values:
 1~9 and A~G
-* I know regular hex values range from 0-9 and A-F but wtf. fk it.
+* I know regular hex values range from 0~9 and A~F but wtf. fk it.
 
 ## Build Plan
 1. Use python to generate thousands of possible sudoku puzzles with varying difficulty.
