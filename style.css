@@ -87,3 +87,23 @@ td {
     margin-top: 1em;
     text-align: center;
 }
+
+.warning {
+    color: red;
+    margin-top: 1em;
+
+}
+
+@media screen and (min-width: 900px) {
+    td {
+        width: 4vw;
+        height: 4vw;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    td {
+        width: 3vw;
+        height: 3vw;
+    }
+}

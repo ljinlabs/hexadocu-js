@@ -2,6 +2,10 @@ const puzzle = document.getElementById("puzzle");
 
 //build puzzle from js
 function buildPuzzle() {
+    // 틀 생성
+    // 각 td 칸마다 id 에 "row-I-col-J" 형식으로 식별자 추가
+    // build empty board
+    // add "row-I-col-J" as id to each td 
     for (let i = 0; i < 12; i++) {
         const tr = document.createElement("tr");
         for (let j = 0; j < 12; j++) {
@@ -17,11 +21,15 @@ function buildPuzzle() {
 }
 
 function parseId(id) {
+    // id 에서 좌표 정보 추출
+    // collect coordinates data from the id
     const idSplit = id.split("-");
     return [parseInt(idSplit[1]), parseInt(idSplit[3])];
 }
 
 function colorBorders() {
+    // 기본 틀 구분선 추가
+    // add box lines to the empty board
     const allCells = document.querySelectorAll(".cell");
     allCells.forEach(elem => {
         const cellId = elem.getAttribute('id');
@@ -37,6 +45,8 @@ function colorBorders() {
         }
     });
 }
+
+
 
 function main() {
     buildPuzzle();
