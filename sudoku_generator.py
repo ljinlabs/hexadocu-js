@@ -30,13 +30,15 @@ class Solver:
         _cols = [(val for idx, val in enumerate(row) if idx == n) for row in self.board]
         return _cols
     
-    def get_nth_box(self, n) -> list:
+    def get_nth_box(self, row, col) -> list:
         """
         0 | 1 | 2
         ---------
         3 | 4 | 5
         ---------
         6 | 7 | 8
-        returns all values in the nth box as a 1d list
+        :returns the current box as a 1d list
         """
+        _box = []
+        
         
