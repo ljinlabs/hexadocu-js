@@ -1,4 +1,4 @@
-_BOARD_DIMENSION = (12,12)
+_BOARD_DIMENSION = (16,16)
 _VALID_SETS = set(['1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'])
 class Solver:
     def __init__(self):
