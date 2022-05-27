@@ -1,4 +1,5 @@
 const puzzle = document.getElementById("puzzle");
+const dimension = 16;
 
 //build puzzle from js
 function buildPuzzle() {
@@ -6,9 +7,9 @@ function buildPuzzle() {
     // 각 td 칸마다 id 에 "row-I-col-J" 형식으로 식별자 추가
     // build empty board
     // add "row-I-col-J" as id to each td 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < dimension; i++) {
         const tr = document.createElement("tr");
-        for (let j = 0; j < 12; j++) {
+        for (let j = 0; j < dimension; j++) {
             const td = document.createElement("td");
             td.setAttribute("id", `row-${i}-col-${j}`)
             td.setAttribute('class', 'cell');
