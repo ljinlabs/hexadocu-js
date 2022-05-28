@@ -1,8 +1,4 @@
 from random import shuffle, sample
-from secrets import choice
-
-from numpy import diff
-
 from enum import Enum
 
 _BOARD_DIMENSION = (16,16)
@@ -48,7 +44,7 @@ class Solver:
         returns the nth column as a list
         """
         if n < 0 or n > _BOARD_DIMENSION[0]:
-            raise ValueError(f"n must be between [0,16)\nn = {n}")
+            raise ValueError(f"n must be between [0,16]\nn = {n}")
         _cols = [(val for idx, val in enumerate(row) if idx == n) for row in self.board]
         return _cols
     
@@ -66,8 +62,10 @@ class Solver:
         _box = []
         row_start = (row // 4) * 4
         col_start = (col // 4) * 4
-        for i in range(row_start, (row_start + 4)):
-            for j in range(col_start, (col_start + 4)):
+        row_end = row_start + 4 if row_start + 4 < 16 else 16
+        col_end = col_start + 4 if col_start + 4 < 16 else 16
+        for i in range(row_start, ):
+            for j in range(col_start, ):
                 _box.append(self.board[i][j])
         return _box
         
@@ -87,10 +85,10 @@ class Solver:
                     return row_idx, col_idx
         return "999","999"
 
-    def is_bad(self, r, c, value):
-        return self.check_box(r,c,value) or \
-            self.check_row(r, value) or \
-                self.check_col(c, value)
+    def is_valid(self, r, c, value):
+        return not self.check_box(r,c,value) or \
+            not self.check_row(r, value) or \
+                not self.check_col(c, value)
 
     def get_choices(self, r, c):
         row = set(self.get_nth_row(r))
@@ -109,8 +107,9 @@ class Solver:
         _choices = self.get_choices(r,c)
         shuffle(_choices)
         for _choice in _choices:
-            if not self.is_bad(r,c,_choice):
+            if self.is_valid(r,c,_choice):
                 self.board[r][c] = _choice
+                print(self)
                 if self.backtrack():
                     return True
             self.board[r][c] = "0"
@@ -156,22 +155,35 @@ class Builder:
         choices = list(_VALID_SETS)
         shuffle(choices)
         positions = sample([i for i in range(_BOARD_DIMENSION[0] * _BOARD_DIMENSION[1])], _BOARD_DIMENSION[0])
-        print(f"{len(choices)} {len(positions)}")
         for pos in positions:
             elem = choices.pop()
             self.code = self.code[:pos] + elem + self.code[pos + 1:]
         self.solver.code_to_board(self.code)
         return True
 
+    def check_initial_data(self):
+        for row_idx, row in enumerate(self.solver.board):
+            for col_idx, val in enumerate(row):
+                if val == "0":
+                    continue
+                if not self.solver.is_valid(row_idx, col_idx, val):
+                    return False
+        return True
+
+    def insert_initial_data(self, numrows=3):
+        for i in range(numrows):
+            self.insert_one_row()
+    
+
     def build(self, difficulty: Difficulty = Difficulty.EZPZ):
         if difficulty == Difficulty.EZPZ:
             pass
-        row_inserted: bool = self.insert_one_row()
+        row_inserted: bool = self.insert_initial_data()
         if row_inserted:
             print("row inserted")
         print(self.solver)
-        # solved: bool = self.solver.backtrack()
-        # print(self.solver)
+        solved: bool = self.solver.backtrack()
+        print(self.solver)
         print(self.solver.board_to_code)
             
          
