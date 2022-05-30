@@ -1,7 +1,4 @@
 from random import shuffle, sample
-from secrets import choice
-
-from numpy import diff
 
 from enum import Enum
 
@@ -39,7 +36,7 @@ class Solver:
         """
         returns the nth row as a list
         """
-        if n < 0 or n > _BOARD_DIMENSION[0]:
+        if n < 0 or n > _BOARD_DIMENSION[0] - 1:
             raise ValueError(f"n must be between [0,16)\nn = {n}")
         return self.board[n]
 
@@ -47,9 +44,11 @@ class Solver:
         """
         returns the nth column as a list
         """
-        if n < 0 or n > _BOARD_DIMENSION[0]:
+        if n < 0 or n > _BOARD_DIMENSION[0] - 1:
             raise ValueError(f"n must be between [0,16)\nn = {n}")
-        _cols = [(val for idx, val in enumerate(row) if idx == n) for row in self.board]
+        _cols = [[val for idx, val in enumerate(row) if idx == n] for row in self.board]
+        _cols = [_cols[i][0] for i in range(_BOARD_DIMENSION[0])]
+        # print(_cols)
         return _cols
     
     def get_nth_box(self, row, col) -> list:
@@ -66,19 +65,21 @@ class Solver:
         _box = []
         row_start = (row // 4) * 4
         col_start = (col // 4) * 4
-        for i in range(row_start, (row_start + 4)):
-            for j in range(col_start, (col_start + 4)):
+        row_end = row_start + 4 if row_start + 4 < 16 else 15
+        col_end = col_start + 4 if col_start + 4 < 16 else 15
+        for i in range(row_start, row_end):
+            for j in range(col_start, col_end):
                 _box.append(self.board[i][j])
         return _box
         
     def check_row(self, r, value):
-        return value in self.get_nth_row(r)
+        return value not in self.get_nth_row(r)
 
     def check_col(self, c, value):
-        return value in self.get_nth_col(c)
+        return value not in self.get_nth_col(c)
         
     def check_box(self, r, c, value):
-        return value in self.get_nth_box(r,c)
+        return value not in self.get_nth_box(r,c)
 
     def find_next_empty(self):
         for row_idx, row in enumerate(self.board):
@@ -87,10 +88,11 @@ class Solver:
                     return row_idx, col_idx
         return "999","999"
 
-    def is_bad(self, r, c, value):
-        return self.check_box(r,c,value) or \
-            self.check_row(r, value) or \
-                self.check_col(c, value)
+    def is_valid(self, r, c, value):
+        row_valid = self.check_row(r, value)
+        col_valid = self.check_col(c, value)
+        box_valid = self.check_box(r, c, value)
+        return row_valid and col_valid and box_valid
 
     def get_choices(self, r, c):
         row = set(self.get_nth_row(r))
@@ -109,8 +111,9 @@ class Solver:
         _choices = self.get_choices(r,c)
         shuffle(_choices)
         for _choice in _choices:
-            if not self.is_bad(r,c,_choice):
+            if self.is_valid(r,c,_choice):
                 self.board[r][c] = _choice
+                print(self)
                 if self.backtrack():
                     return True
             self.board[r][c] = "0"
@@ -121,12 +124,22 @@ class Solver:
             raise ValueError(f"The dimension does not match\nCurrent length: {length}\nSupposed to be: {correct}")
         board = []
         row = []
+        self.code = code
         for idx, val in enumerate(code):
             if idx % 16 == 0 and idx != 0:
                 board.append(row)
                 row = []
             row.append(val)
+        board.append(row)
         self.board = board
+        return True
+
+    def board_is_valid(self):
+        for r, row in enumerate(self.board):
+            for c, val in enumerate(row):
+                if val != "0":
+                    if not self.is_valid(r, c, val):
+                        return False
         return True
 
     @property
@@ -139,6 +152,7 @@ class Solver:
             for val in row:
                 code += val
         return code
+
     def __str__(self):
         _str = ""
         for row in self.board:
@@ -152,28 +166,36 @@ class Builder:
         self.code = "0" * 256
         self.solver = Solver()
         
-    def insert_one_row(self):
-        choices = list(_VALID_SETS)
-        shuffle(choices)
-        positions = sample([i for i in range(_BOARD_DIMENSION[0] * _BOARD_DIMENSION[1])], _BOARD_DIMENSION[0])
-        print(f"{len(choices)} {len(positions)}")
+    def pos_to_coords(self, pos) -> tuple:
+        row = pos // _BOARD_DIMENSION[0]
+        col = pos % _BOARD_DIMENSION[1]
+        return (row, col)
+
+    def insert_data(self, num_points=40):
+        self.solver.code_to_board(("0" * 16 * 16))
+        positions = sample([i for i in range(_BOARD_DIMENSION[0] * _BOARD_DIMENSION[1])], num_points)
+        print(positions)
         for pos in positions:
-            elem = choices.pop()
-            self.code = self.code[:pos] + elem + self.code[pos + 1:]
-        self.solver.code_to_board(self.code)
+            r, c = self.pos_to_coords(pos)
+            choices = self.solver.get_choices(r, c)
+            shuffle(choices)
+            try:
+                elem = choices.pop()
+                self.code = self.code[:pos] + elem + self.code[pos + 1:]
+                self.solver.code_to_board(self.code)
+                print(self.code)
+            except IndexError:
+                print(f"no choices left for this cell\npos: {pos[0]}, {pos[1]}\n")
         return True
 
     def build(self, difficulty: Difficulty = Difficulty.EZPZ):
         if difficulty == Difficulty.EZPZ:
             pass
-        row_inserted: bool = self.insert_one_row()
-        if row_inserted:
-            print("row inserted")
+        self.solver.code_to_board(("0" * (16 * 16)))
+        self.insert_data()
         print(self.solver)
-        # solved: bool = self.solver.backtrack()
-        # print(self.solver)
-        print(self.solver.board_to_code)
-            
+        self.solver.backtrack()
+        print(self.solver)            
          
         
 if __name__ == '__main__':
