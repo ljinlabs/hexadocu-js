@@ -1,8 +1,8 @@
 from random import shuffle, sample
 from enum import Enum
 
-_BOARD_DIMENSION = (16,16)
-_VALID_SETS = set(['1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G'])
+BOARD_DIMENSION = (16,16)
+VALID_SETS = set(['1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G'])
 
 class Difficulty(Enum):
     EZPZ = 1
@@ -14,7 +14,7 @@ class Difficulty(Enum):
 class Solver:
     def __init__(self):
         self.board = None
-        self.is_solved = False
+        self.num_tries = 0
 
     def get_board(self, board) -> list:
         try:
@@ -104,6 +104,8 @@ class Solver:
         return list(left)
 
     def backtrack(self):
+        self.num_tries += 1
+        print(f"attemp: {self.num_tries}")
         r, c = self.find_next_empty()
         if r == "999":
             return self.board
@@ -174,7 +176,7 @@ class Builder:
         col = pos % _BOARD_DIMENSION[1]
         return (row, col)
 
-    def insert_data(self, num_points=40):
+    def insert_data(self, num_points=52):
         self.solver.code_to_board(("0" * 16 * 16))
         positions = sample([i for i in range(_BOARD_DIMENSION[0] * _BOARD_DIMENSION[1])], num_points)
         print(positions)
