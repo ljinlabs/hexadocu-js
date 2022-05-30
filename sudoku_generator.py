@@ -150,6 +150,10 @@ class Builder:
     def __init__(self):
         self.code = "0" * 256
         self.solver = Solver()
+
+    def reset(self):
+        self.code = "0" * 256
+        self.solver = Solver()
         
     def insert_one_row(self):
         choices = list(_VALID_SETS)
@@ -164,16 +168,23 @@ class Builder:
     def check_initial_data(self):
         for row_idx, row in enumerate(self.solver.board):
             for col_idx, val in enumerate(row):
-                if val == "0":
-                    continue
-                if not self.solver.is_valid(row_idx, col_idx, val):
-                    return False
+                if val != "0":
+                    data_is_valid = self.solver.is_valid(row_idx, col_idx, val)
+                    print(data_is_valid)
+                    if not data_is_valid:
+                        print("ye")
+                        return False
+                    
         return True
 
     def insert_initial_data(self, numrows=3):
         for i in range(numrows):
             self.insert_one_row()
-    
+            if self.check_initial_data() == False:
+                self.reset()
+                self.insert_initial_data()
+        return True
+
 
     def build(self, difficulty: Difficulty = Difficulty.EZPZ):
         if difficulty == Difficulty.EZPZ:
@@ -182,9 +193,9 @@ class Builder:
         if row_inserted:
             print("row inserted")
         print(self.solver)
-        solved: bool = self.solver.backtrack()
-        print(self.solver)
-        print(self.solver.board_to_code)
+        # solved: bool = self.solver.backtrack()
+        # print(self.solver)
+        # print(self.solver.board_to_code)
             
          
         
