@@ -42,6 +42,7 @@ class PuzzleTestCase(TestCase):
     def setUp(self):
         self.code_16 = "0" * (16 * 16)
         self.code_9 = "0" * (9 * 9)
+        self.code_9_last_box = 
 
     def test_init(self):
         # default case
@@ -63,4 +64,4 @@ class PuzzleTestCase(TestCase):
         self.assertEqual(len(self.p.board), 16)
         self.assertEqual(len(self.p.board[0]), 16)
 
-    def test
+    # def test
